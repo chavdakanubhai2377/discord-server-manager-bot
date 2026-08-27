@@ -1,79 +1,117 @@
 import discord
 from discord.ext import commands
 import os
-import sys
-from config import DISCORD_TOKEN, BOT_PREFIX
+from dotenv import load_dotenv
+import asyncio
 
-# Setup bot intents
+load_dotenv()
+
+# Bot configuration
+DISCORD_TOKEN = os.getenv('DISCORD_TOKEN')
+BOT_PREFIX = os.getenv('BOT_PREFIX', '!')
+
+# Create bot instance
 intents = discord.Intents.default()
 intents.message_content = True
 intents.members = True
 intents.moderation = True
 
-# Initialize bot
 bot = commands.Bot(
     command_prefix=BOT_PREFIX,
     intents=intents,
-    help_command=commands.DefaultHelpCommand()
+    help_command=None,
+    activity=discord.Activity(
+        type=discord.ActivityType.watching,
+        name="TableMC Development"
+    ),
+    status=discord.Status.online
 )
 
-# Load Cogs (Extensions)
+# Bot events
+@bot.event
+async def on_ready():
+    """Called when bot successfully connects to Discord"""
+    print(f'\n{"="*50}')
+    print(f'Bot Name: TableMC Development')
+    print(f'Logged in as: {bot.user}')
+    print(f'Bot ID: {bot.user.id}')
+    print(f'Prefix: {BOT_PREFIX}')
+    print(f'Guilds: {len(bot.guilds)}')
+    print(f'Users: {sum(len(guild.members) for guild in bot.guilds)}')
+    print(f'Discord.py Version: {discord.__version__}')
+    print(f'{"="*50}\n')
+
+@bot.event
+async def on_connect():
+    """Called when bot connects to Discord (before ready)"""
+    print(f'[TableMC Development] Connecting to Discord...')
+
+@bot.event
+async def on_disconnect():
+    """Called when bot disconnects from Discord"""
+    print(f'[TableMC Development] Disconnected from Discord')
+
+@bot.event
+async def on_resumed():
+    """Called when bot resumes connection"""
+    print(f'[TableMC Development] Connection resumed')
+
+@bot.event
+async def on_error(event, *args, **kwargs):
+    """Handle errors"""
+    print(f'[TableMC Development] Error in {event}:')
+    import traceback
+    traceback.print_exc()
+
+@bot.event
+async def on_command_error(ctx, error):
+    """Handle command errors"""
+    if isinstance(error, commands.CommandNotFound):
+        await ctx.send(f'❌ Command not found! Use `{BOT_PREFIX}help` for available commands.')
+    elif isinstance(error, commands.MissingPermissions):
+        await ctx.send('❌ You do not have permission to use this command!')
+    elif isinstance(error, commands.MissingRequiredArgument):
+        await ctx.send(f'❌ Missing required argument: {error.param}')
+    elif isinstance(error, commands.BadArgument):
+        await ctx.send(f'❌ Invalid argument provided: {error}')
+    else:
+        await ctx.send(f'❌ An error occurred: {error}')
+        print(f'[TableMC Development] Error: {error}')
+
+# Load cogs
 async def load_cogs():
+    """Load all cogs from the cogs directory"""
     cogs_dir = 'cogs'
+    
     if not os.path.exists(cogs_dir):
-        os.makedirs(cogs_dir)
+        print(f'[TableMC Development] Cogs directory not found!')
+        return
     
     for filename in os.listdir(cogs_dir):
         if filename.endswith('.py') and not filename.startswith('_'):
             try:
                 await bot.load_extension(f'cogs.{filename[:-3]}')
-                print(f'✓ Loaded cog: {filename}')
+                print(f'[TableMC Development] ✓ Loaded cog: {filename[:-3]}')
             except Exception as e:
-                print(f'✗ Failed to load cog {filename}: {e}')
-
-@bot.event
-async def on_ready():
-    print(f'\n✓ Bot logged in as: {bot.user}')
-    print(f'✓ Bot ID: {bot.user.id}')
-    print(f'✓ Connected to {len(bot.guilds)} guild(s)')
-    
-    # Set bot activity
-    await bot.change_presence(
-        activity=discord.Activity(
-            type=discord.ActivityType.watching,
-            name=f'{BOT_PREFIX}help | Managing {len(bot.guilds)} servers'
-        )
-    )
-
-@bot.event
-async def on_command_error(ctx, error):
-    if isinstance(error, commands.CommandNotFound):
-        await ctx.send(f'❌ Command not found. Use `{BOT_PREFIX}help` to see available commands.')
-    elif isinstance(error, commands.MissingPermissions):
-        await ctx.send('❌ You don\'t have permission to use this command.')
-    elif isinstance(error, commands.BotMissingPermissions):
-        await ctx.send('❌ I don\'t have permission to perform this action.')
-    else:
-        await ctx.send(f'❌ An error occurred: {error}')
-        print(f'Error: {error}')
+                print(f'[TableMC Development] ✗ Failed to load cog {filename[:-3]}: {e}')
 
 async def main():
+    """Start the bot"""
     async with bot:
-        # Load all cogs
         await load_cogs()
-        
-        # Start the bot
         try:
+            print(f'[TableMC Development] Starting bot...')
             await bot.start(DISCORD_TOKEN)
-        except discord.LoginFailure:
-            print('❌ Invalid Discord token. Please check your .env file.')
-            sys.exit(1)
+        except discord.errors.LoginFailure:
+            print(f'[TableMC Development] ✗ Login failed! Check your Discord token.')
+        except Exception as e:
+            print(f'[TableMC Development] ✗ Failed to start bot: {e}')
 
+# Run the bot
 if __name__ == '__main__':
-    print('🤖 Starting Discord Server Manager Bot...')
-    
     try:
-        import asyncio
         asyncio.run(main())
     except KeyboardInterrupt:
-        print('\n✓ Bot shutdown gracefully')
+        print(f'\n[TableMC Development] Bot shutting down...')
+    except Exception as e:
+        print(f'[TableMC Development] Unexpected error: {e}')
