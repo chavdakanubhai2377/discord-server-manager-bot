@@ -2,116 +2,197 @@ import discord
 from discord.ext import commands
 import os
 from dotenv import load_dotenv
-import asyncio
+from datetime import datetime
 
+# Load environment variables
 load_dotenv()
 
-# Bot configuration
-DISCORD_TOKEN = os.getenv('DISCORD_TOKEN')
-BOT_PREFIX = os.getenv('BOT_PREFIX', '!')
+# Get bot token and prefix from environment
+TOKEN = os.getenv('DISCORD_TOKEN')
+PREFIX = os.getenv('BOT_PREFIX', '!')
 
-# Create bot instance
+# Create bot instance with intents
 intents = discord.Intents.default()
 intents.message_content = True
 intents.members = True
+intents.guilds = True
 intents.moderation = True
+intents.reactions = True
 
-bot = commands.Bot(
-    command_prefix=BOT_PREFIX,
-    intents=intents,
-    help_command=None,
-    activity=discord.Activity(
-        type=discord.ActivityType.watching,
-        name="TableMC Development"
-    ),
-    status=discord.Status.online
-)
+bot = commands.Bot(command_prefix=PREFIX, intents=intents)
 
-# Bot events
+# Bot info
+BOT_NAME = os.getenv('BOT_NAME', 'TableMC Development')
+BOT_VERSION = os.getenv('BOT_VERSION', '1.0.0')
+
 @bot.event
 async def on_ready():
-    """Called when bot successfully connects to Discord"""
-    print(f'\n{"="*50}')
-    print(f'Bot Name: TableMC Development')
-    print(f'Logged in as: {bot.user}')
-    print(f'Bot ID: {bot.user.id}')
-    print(f'Prefix: {BOT_PREFIX}')
-    print(f'Guilds: {len(bot.guilds)}')
-    print(f'Users: {sum(len(guild.members) for guild in bot.guilds)}')
-    print(f'Discord.py Version: {discord.__version__}')
-    print(f'{"="*50}\n')
+    """Called when the bot is ready"""
+    print(f"\n{'='*50}")
+    print(f"✅ {BOT_NAME} is now online!")
+    print(f"{'='*50}")
+    print(f"🤖 Bot Name: {bot.user.name}")
+    print(f"🆔 Bot ID: {bot.user.id}")
+    print(f"📌 Prefix: {PREFIX}")
+    print(f"📊 Servers: {len(bot.guilds)}")
+    print(f"👥 Users: {sum(g.member_count for g in bot.guilds)}")
+    print(f"⏰ Started at: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+    print(f"{'='*50}\n")
+    
+    # Set bot status
+    activity = discord.Activity(
+        type=discord.ActivityType.watching,
+        name=f"{PREFIX}help | TableMC Development"
+    )
+    await bot.change_presence(status=discord.Status.online, activity=activity)
 
 @bot.event
-async def on_connect():
-    """Called when bot connects to Discord (before ready)"""
-    print(f'[TableMC Development] Connecting to Discord...')
+async def on_guild_join(guild):
+    """Called when bot joins a new guild"""
+    print(f"✅ Joined new server: {guild.name} (ID: {guild.id})")
+    print(f"   Members: {guild.member_count}")
 
 @bot.event
-async def on_disconnect():
-    """Called when bot disconnects from Discord"""
-    print(f'[TableMC Development] Disconnected from Discord')
-
-@bot.event
-async def on_resumed():
-    """Called when bot resumes connection"""
-    print(f'[TableMC Development] Connection resumed')
-
-@bot.event
-async def on_error(event, *args, **kwargs):
-    """Handle errors"""
-    print(f'[TableMC Development] Error in {event}:')
-    import traceback
-    traceback.print_exc()
+async def on_guild_remove(guild):
+    """Called when bot leaves a guild"""
+    print(f"❌ Left server: {guild.name} (ID: {guild.id})")
 
 @bot.event
 async def on_command_error(ctx, error):
     """Handle command errors"""
-    if isinstance(error, commands.CommandNotFound):
-        await ctx.send(f'❌ Command not found! Use `{BOT_PREFIX}help` for available commands.')
-    elif isinstance(error, commands.MissingPermissions):
-        await ctx.send('❌ You do not have permission to use this command!')
+    if isinstance(error, commands.MissingPermissions):
+        embed = discord.Embed(
+            title="❌ Permission Denied",
+            description="You don't have permission to use this command!",
+            color=discord.Color.red()
+        )
+        await ctx.send(embed=embed)
     elif isinstance(error, commands.MissingRequiredArgument):
-        await ctx.send(f'❌ Missing required argument: {error.param}')
-    elif isinstance(error, commands.BadArgument):
-        await ctx.send(f'❌ Invalid argument provided: {error}')
+        embed = discord.Embed(
+            title="❌ Missing Arguments",
+            description=f"Missing required argument: `{error.param.name}`",
+            color=discord.Color.red()
+        )
+        await ctx.send(embed=embed)
+    elif isinstance(error, commands.CommandNotFound):
+        pass  # Silently ignore unknown commands
     else:
-        await ctx.send(f'❌ An error occurred: {error}')
-        print(f'[TableMC Development] Error: {error}')
+        print(f"⚠️ Error: {error}")
 
-# Load cogs
+@bot.command(name='ping')
+async def ping(ctx):
+    """Check bot latency"""
+    embed = discord.Embed(
+        title="🏓 Pong!",
+        description=f"Bot latency: `{round(bot.latency * 1000)}ms`",
+        color=discord.Color.blue()
+    )
+    await ctx.send(embed=embed)
+
+@bot.command(name='status')
+async def status(ctx):
+    """Get bot status information"""
+    embed = discord.Embed(
+        title="📊 Bot Status",
+        color=discord.Color.blue()
+    )
+    embed.add_field(name="🤖 Name", value=BOT_NAME, inline=True)
+    embed.add_field(name="📌 Version", value=BOT_VERSION, inline=True)
+    embed.add_field(name="🆔 Bot ID", value=f"`{bot.user.id}`", inline=True)
+    embed.add_field(name="📡 Latency", value=f"`{round(bot.latency * 1000)}ms`", inline=True)
+    embed.add_field(name="🌍 Servers", value=f"`{len(bot.guilds)}`", inline=True)
+    embed.add_field(name="👥 Total Users", value=f"`{sum(g.member_count for g in bot.guilds)}`", inline=True)
+    embed.add_field(name="⏰ Uptime", value=f"Started at {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}", inline=False)
+    embed.add_field(name="✅ Cogs Loaded", value=f"`{len(bot.cogs)}` cogs active", inline=True)
+    embed.set_footer(text=f"TableMC Development • {BOT_VERSION}", icon_url=bot.user.avatar.url)
+    
+    await ctx.send(embed=embed)
+
+@bot.command(name='help')
+async def help_command(ctx):
+    """Show help information"""
+    embed = discord.Embed(
+        title="📚 Help - Available Commands",
+        description=f"Use `{PREFIX}command_name` to execute commands",
+        color=discord.Color.blue()
+    )
+    
+    embed.add_field(
+        name="🔐 Moderation",
+        value=f"`{PREFIX}kick`, `{PREFIX}ban`, `{PREFIX}warn`, `{PREFIX}mute`, `{PREFIX}unmute`, `{PREFIX}purge`",
+        inline=False
+    )
+    
+    embed.add_field(
+        name="👋 Welcome System",
+        value=f"`{PREFIX}welcome` - Full welcome system configuration",
+        inline=False
+    )
+    
+    embed.add_field(
+        name="🎫 Ticket System",
+        value=f"`{PREFIX}ticket` - Setup and manage support tickets",
+        inline=False
+    )
+    
+    embed.add_field(
+        name="🤖 Auto-Responder",
+        value=f"`{PREFIX}autoresponse` - Setup automatic keyword responses",
+        inline=False
+    )
+    
+    embed.add_field(
+        name="🎭 Reaction Roles",
+        value=f"`{PREFIX}reactionrole` - Setup self-assignable roles",
+        inline=False
+    )
+    
+    embed.add_field(
+        name="ℹ️ Information",
+        value=f"`{PREFIX}ping`, `{PREFIX}status`, `{PREFIX}help`",
+        inline=False
+    )
+    
+    embed.set_footer(text=f"TableMC Development • {BOT_VERSION}")
+    
+    await ctx.send(embed=embed)
+
 async def load_cogs():
     """Load all cogs from the cogs directory"""
-    cogs_dir = 'cogs'
+    cogs_dir = "cogs"
     
     if not os.path.exists(cogs_dir):
-        print(f'[TableMC Development] Cogs directory not found!')
+        print(f"⚠️ Warning: {cogs_dir} directory not found!")
         return
     
+    cog_count = 0
     for filename in os.listdir(cogs_dir):
         if filename.endswith('.py') and not filename.startswith('_'):
+            cog_name = filename[:-3]
             try:
-                await bot.load_extension(f'cogs.{filename[:-3]}')
-                print(f'[TableMC Development] ✓ Loaded cog: {filename[:-3]}')
+                await bot.load_extension(f'{cogs_dir}.{cog_name}')
+                print(f"✅ Loaded cog: {cog_name}")
+                cog_count += 1
             except Exception as e:
-                print(f'[TableMC Development] ✗ Failed to load cog {filename[:-3]}: {e}')
+                print(f"❌ Failed to load cog {cog_name}: {e}")
+    
+    print(f"\n📦 Total cogs loaded: {cog_count}\n")
 
 async def main():
-    """Start the bot"""
+    """Main function to start the bot"""
     async with bot:
         await load_cogs()
-        try:
-            print(f'[TableMC Development] Starting bot...')
-            await bot.start(DISCORD_TOKEN)
-        except discord.errors.LoginFailure:
-            print(f'[TableMC Development] ✗ Login failed! Check your Discord token.')
-        except Exception as e:
-            print(f'[TableMC Development] ✗ Failed to start bot: {e}')
+        await bot.start(TOKEN)
 
-# Run the bot
-if __name__ == '__main__':
-    try:
-        asyncio.run(main())
-    except KeyboardInterrupt:
-        print(f'\n[TableMC Development] Bot shutting down...')
-    except Exception as e:
-        print(f'[TableMC Development] Unexpected error: {e}')
+if __name__ == "__main__":
+    if not TOKEN:
+        print("❌ Error: DISCORD_TOKEN not found in .env file!")
+        print("Please set your Discord bot token in the .env file")
+        exit(1)
+    
+    print(f"\n🚀 Starting {BOT_NAME} v{BOT_VERSION}...")
+    print(f"📌 Prefix: {PREFIX}")
+    print(f"{'='*50}\n")
+    
+    import asyncio
+    asyncio.run(main())
