@@ -1,389 +1,232 @@
-# Discord Server Manager Bot
+# 🤖 TableMC Development - Discord Server Manager Bot
 
-A comprehensive Discord bot for server management with moderation, leveling, welcome messages, and fun commands.
+A premium, feature-rich Discord bot built with discord.py offering advanced server management, moderation, welcome systems, ticketing, auto-responses, and reaction roles.
 
-## Features
+## ✨ Features
 
-### 🛡️ Moderation
-- **Kick** - Remove members from the server
-- **Ban** - Ban members from the server
-- **Warn** - Issue warnings (auto-kick after 3 warnings)
-- **Mute** - Temporarily or permanently mute members
-- **Unmute** - Remove mute from members
-- **Purge** - Delete messages in bulk
+### 🔐 Advanced Moderation
+- **Kick & Ban System** - Remove problematic members with logging
+- **Warning System** - Track member warnings (auto-kick at 3 warnings)
+- **Mute System** - Temporary muting with auto-unmute
+- **Message Purge** - Bulk delete messages from channels
+- **Action Logging** - Comprehensive moderation action tracking
 
-### 📊 Leveling System
-- **Level** - Check user levels and progress
-- **Leaderboard** - View top 10 members by level
-- **AddXP** - Manually add XP to users (Admin)
-- **ResetXP** - Reset user progression (Admin)
+### 👋 Sapphire-Style Welcome System
+- **Custom Welcome Messages** - Fully customizable welcome embeds
+- **Member Information Display** - Shows account age, join position, etc.
+- **Goodbye Messages** - Track member departures
+- **Test Mode** - Preview messages before going live
+- **Toggle Control** - Enable/disable welcomes per server
 
-### 👋 Welcome & Goodbye
-- **SetWelcome** - Configure welcome messages
-- **SetGoodbye** - Configure goodbye messages
-- **TestWelcome** - Test welcome message
-- **TestGoodbye** - Test goodbye message
-- Custom message variables and templates
+### 🎫 Premium Ticket System (Roti Bot Style)
+- **Interactive Ticket Panel** - Button-based ticket creation
+- **Auto-Categorization** - Tickets organized in dedicated category
+- **Support Team Assignment** - Assign support roles
+- **Ticket Transcripts** - Save conversation history
+- **Quick Close** - React with 🔒 or use commands to close tickets
 
-### 🎮 Fun Commands
-- **8Ball** - Ask the magic 8 ball
-- **CoinFlip** - Flip a coin
-- **Roll** - Roll a dice
-- **Joke** - Get a random joke
-- **RPS** - Play rock paper scissors
+### 🤖 Auto-Responder
+- **Keyword Triggers** - Automatic responses to specific keywords
+- **Custom Responses** - Fully customizable reply messages
+- **Search Function** - Find existing auto-responses
+- **Edit & Manage** - Modify or delete responses as needed
+- **Rich Embeds** - Beautiful formatted responses
 
-### ℹ️ Utility & Information
-- **Ping** - Check bot latency
-- **BotInfo** - Get bot information
-- **ServerInfo** - Get server details
-- **UserInfo** - Get user information
-- **Avatar** - View user avatar
-- **Stats** - View bot statistics
-- **Invite** - Get bot invite link
-- **Help** - Show available commands
+### 🎭 Reaction Roles
+- **Self-Assignable Roles** - Members get roles by reacting
+- **Multiple Role Support** - Unlimited reaction-role pairs per message
+- **Auto-Remove** - Roles removed when reaction is removed
+- **Sync System** - Keep reactions in sync with configuration
+- **Easy Management** - Simple commands to add/remove roles
 
-## Installation
+## 🚀 Quick Start
 
 ### Prerequisites
 - Python 3.8+
+- discord.py 2.3.2+
 - pip (Python package manager)
-- Discord Bot Token
-- MongoDB (optional, for database features)
 
-### Setup Steps
+### Installation
 
 1. **Clone the repository**
-   ```bash
-   git clone https://github.com/chavdakanubhai2377/discord-server-manager-bot.git
-   cd discord-server-manager-bot
-   ```
+```bash
+git clone https://github.com/chavdakanubhai2377/discord-server-manager-bot.git
+cd discord-server-manager-bot
+```
 
-2. **Create virtual environment**
-   ```bash
-   python -m venv venv
-   source venv/bin/activate  # On Windows: venv\Scripts\activate
-   ```
+2. **Install dependencies**
+```bash
+pip install -r requirements.txt
+```
 
-3. **Install dependencies**
-   ```bash
-   pip install -r requirements.txt
-   ```
+3. **Set up environment variables**
+```bash
+cp .env.example .env
+# Edit .env with your Discord bot token
+```
 
-4. **Configure environment variables**
-   ```bash
-   cp .env.example .env
-   # Edit .env with your Discord token and settings
-   ```
+4. **Run the bot**
+```bash
+python main.py
+```
 
-5. **Run the bot**
-   ```bash
-   python main.py
-   ```
-
-## Configuration
+## ⚙️ Configuration
 
 ### Environment Variables (.env)
-```env
+```
 DISCORD_TOKEN=your_bot_token_here
 BOT_PREFIX=!
-MONGODB_URI=mongodb://localhost:27017/discord_bot
+BOT_NAME=TableMC Development
 ```
 
-### Getting a Discord Bot Token
-1. Go to [Discord Developer Portal](https://discord.com/developers/applications)
-2. Click "New Application"
-3. Go to "Bot" section and click "Add Bot"
-4. Copy the token under USERNAME
-5. Enable these Intents:
-   - Message Content Intent
-   - Server Members Intent
-   - Moderation Intent
+Get your Discord bot token from [Discord Developer Portal](https://discord.com/developers/applications)
 
-## Usage
+## 📚 Command Guide
 
-### Common Commands
-
-**Moderation:**
+### Moderation Commands
 ```
-!kick @user [reason] - Kick a member
-!ban @user [reason] - Ban a member
-!warn @user [reason] - Warn a member
-!mute @user [time] [reason] - Mute a member
-!unmute @user - Unmute a member
-!purge [amount] - Delete messages
+!kick <user> [reason]           - Kick a user
+!ban <user> [reason]            - Ban a user
+!warn <user> [reason]           - Warn a user
+!mute <user> <minutes> [reason] - Mute a user
+!unmute <user>                  - Unmute a user
+!purge <amount>                 - Delete messages
 ```
 
-**Leveling:**
+### Welcome System
 ```
-!level [@user] - Check level
-!leaderboard - View top members
-!addxp @user <amount> - Add XP (Admin)
-!resetxp @user - Reset XP (Admin)
-```
-
-**Welcome System:**
-```
-!setwelcome [channel] [message] - Set welcome message
-!setgoodbye [channel] [message] - Set goodbye message
-!testwelcome - Test welcome message
-!testgoodbye - Test goodbye message
+!welcome channel <#channel>              - Set welcome channel
+!welcome title <text>                    - Set welcome title
+!welcome description <text>              - Set description
+!welcome image <url>                     - Set welcome image
+!welcome test                            - Test welcome message
+!welcome toggle                          - Toggle on/off
+!welcome preview                         - View current settings
 ```
 
-**Message Variables:**
-- `{user}` - User mention
-- `{username}` - Username
-- `{server}` - Server name
-- `{count}` - Member count
+Variables: `{user}` `{username}` `{server}` `{count}` `{id}` `{tag}`
 
-**Fun:**
+### Ticket System
 ```
-!8ball <question> - Ask magic 8 ball
-!coinflip - Flip a coin
-!roll [sides] - Roll a dice
-!joke - Get a joke
-!rps <rock|paper|scissors> - Play RPS
+!ticket setup <category> <role>    - Initialize tickets
+!ticket create                     - Create a ticket
+!ticket close                      - Close current ticket
+!ticket panel                      - Send creation panel
+!ticket status                     - Check ticket info
 ```
 
-**Utility:**
+### Auto-Responder
 ```
-!ping - Check latency
-!botinfo - Bot information
-!serverinfo - Server information
-!userinfo [@user] - User information
-!avatar [@user] - View avatar
-!stats - Bot statistics
-!invite - Get invite link
-!help - Show all commands
+!autoresponse add <trigger> <response>   - Add response
+!autoresponse remove <trigger>           - Delete response
+!autoresponse list                       - List all responses
+!autoresponse edit <trigger> <response>  - Modify response
+!autoresponse search <keyword>           - Search responses
+!autoresponse clear                      - Delete all
 ```
 
-## Keeping Bot 24/7 Online
-
-### Option 1: Hosting Services (Recommended)
-
-#### **Replit**
-1. Fork the repository to Replit
-2. Set environment variables in Secrets
-3. Install UptimeRobot (free) to ping the bot every 5 minutes
-4. Cost: Free
-
-#### **Heroku** (formerly free, now paid)
-1. Create Heroku account
-2. Deploy using Git
-3. Add Procfile with: `worker: python main.py`
-4. Cost: ~$7/month minimum
-
-#### **PythonAnywhere**
-1. Create account at PythonAnywhere.com
-2. Upload files via web interface
-3. Create scheduled task to run bot
-4. Cost: Free tier available
-
-#### **Glitch**
-1. Import GitHub repo to Glitch
-2. Set up environment variables
-3. Enable project to stay awake
-4. Cost: Free
-
-### Option 2: VPS Hosting
-
-#### **DigitalOcean**
-1. Create Droplet (Ubuntu 20.04)
-2. SSH into server: `ssh root@your_ip`
-3. Install Python: `sudo apt-get install python3 python3-pip`
-4. Clone repository and install dependencies
-5. Use systemd service (see below)
-6. Cost: $5-6/month
-
-#### **AWS EC2**
-1. Launch free tier instance
-2. SSH into instance
-3. Install Python and dependencies
-4. Set up systemd service
-5. Cost: Free tier available
-
-### Option 3: Systemd Service (Linux/VPS)
-
-Create `/etc/systemd/system/discord-bot.service`:
-```ini
-[Unit]
-Description=Discord Server Manager Bot
-After=network.target
-
-[Service]
-Type=simple
-User=your_username
-WorkingDirectory=/path/to/discord-server-manager-bot
-Environment="PATH=/path/to/discord-server-manager-bot/venv/bin"
-ExecStart=/path/to/discord-server-manager-bot/venv/bin/python main.py
-Restart=always
-RestartSec=10
-
-[Install]
-WantedBy=multi-user.target
+### Reaction Roles
+```
+!reactionrole create <title>                    - Create message
+!reactionrole add <msg_id> <emoji> <role>      - Add role pair
+!reactionrole remove <msg_id> <emoji>          - Remove role pair
+!reactionrole list [msg_id]                    - View roles
+!reactionrole delete <msg_id>                  - Delete message
+!reactionrole sync <msg_id>                    - Sync reactions
 ```
 
-Enable and start:
-```bash
-sudo systemctl enable discord-bot
-sudo systemctl start discord-bot
-sudo systemctl status discord-bot
-```
-
-### Option 4: Docker
-
-Create `Dockerfile`:
-```dockerfile
-FROM python:3.9-slim
-
-WORKDIR /app
-COPY requirements.txt .
-RUN pip install -r requirements.txt
-COPY . .
-
-CMD ["python", "main.py"]
-```
-
-Build and run:
-```bash
-docker build -t discord-bot .
-docker run -d --name discord-bot -e DISCORD_TOKEN=your_token discord-bot
-```
-
-### Option 5: GitHub Actions (Free)
-
-Create `.github/workflows/bot.yml`:
-```yaml
-name: Run Discord Bot
-
-on:
-  schedule:
-    - cron: '0 0 * * *'
-  workflow_dispatch:
-
-jobs:
-  run:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-python@v2
-        with:
-          python-version: '3.9'
-      - run: pip install -r requirements.txt
-      - run: python main.py
-        env:
-          DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
-```
-
-## Recommended Setup for 24/7
-
-**Best Option: DigitalOcean + Systemd**
-- Cost: $5/month
-- Reliability: 99.9% uptime
-- Setup time: 15-20 minutes
-- Easy to manage and scale
-
-## Database Setup (Optional)
-
-### MongoDB Atlas (Cloud)
-1. Create free account at mongodb.com/cloud/atlas
-2. Create cluster
-3. Get connection string
-4. Add to `.env`: `MONGODB_URI=mongodb+srv://user:password@cluster.mongodb.net/database`
-
-### Local MongoDB
-```bash
-# Install MongoDB
-sudo apt-get install mongodb
-
-# Start MongoDB
-sudo service mongod start
-
-# Connection string
-MONGODB_URI=mongodb://localhost:27017/discord_bot
-```
-
-## Troubleshooting
-
-### Bot Won't Start
-- Check Discord token in `.env`
-- Verify Python 3.8+ installed
-- Install all dependencies: `pip install -r requirements.txt`
-- Check logs: `python main.py`
-
-### Commands Not Working
-- Verify bot has permissions in channel
-- Check prefix in `.env` (default: `!`)
-- Ensure intents enabled in Developer Portal
-- Bot needs "Administrator" permission
-
-### Bot Disconnects
-- Check internet connection
-- Verify token is still valid
-- Check rate limiting
-- Use restart service (systemd/Docker handles this)
-
-### High Memory Usage
-- Check for memory leaks in cogs
-- Limit number of concurrent processes
-- Use proper cleanup in event listeners
-
-## Project Structure
+## 📁 Project Structure
 
 ```
 discord-server-manager-bot/
-├── main.py              # Bot entry point
-├── config.py            # Configuration
-├── requirements.txt     # Dependencies
-├── .env.example         # Environment template
-├── .gitignore          # Git ignore rules
-├── cogs/               # Command modules
-│   ├── moderation.py   # Moderation commands
-│   ├── leveling.py     # Leveling system
-│   ├── welcome.py      # Welcome/goodbye
-│   ├── utility.py      # Info commands
-│   └── fun.py          # Fun commands
-└── README.md           # This file
+├── main.py                    # Bot entry point
+├── .env.example              # Environment template
+├── requirements.txt          # Dependencies
+├── README.md                 # This file
+└── cogs/
+    ├── advanced_moderation.py    # Moderation system
+    ├── sapphire_welcome.py       # Welcome messages
+    ├── premium_tickets.py        # Ticket system
+    ├── auto_responder.py         # Auto-responses
+    └── reaction_roles.py         # Reaction roles
 ```
 
-## Contributing
+## 🔐 Permissions
 
+The bot requires the following permissions:
+- Manage Messages
+- Manage Members
+- Manage Roles
+- Manage Channels
+- Send Messages
+- Embed Links
+- Add Reactions
+- Read Message History
+
+## 🎯 Use Cases
+
+- **Server Moderation** - Comprehensive tools for server admins
+- **Welcome Automation** - Professional member onboarding
+- **Support Tickets** - Organized customer support
+- **User Engagement** - Reaction roles for member roles
+- **FAQ Automation** - Auto-respond to common questions
+
+## 🐛 Troubleshooting
+
+### Bot not responding
+- Check bot token in .env
+- Ensure bot has proper permissions
+- Verify bot is online in Discord
+
+### Commands not working
+- Use correct prefix (default: `!`)
+- Ensure you have required permissions
+- Check bot role hierarchy for role commands
+
+### Welcome messages not sending
+- Configure channel with `!welcome channel`
+- Ensure bot can send messages in channel
+- Verify feature is enabled with `!welcome toggle`
+
+## 🤝 Contributing
+
+Contributions welcome! Please:
 1. Fork the repository
-2. Create feature branch: `git checkout -b feature-name`
-3. Make changes and commit: `git commit -am 'Add feature'`
-4. Push to branch: `git push origin feature-name`
-5. Submit pull request
+2. Create feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit changes (`git commit -m 'Add amazing feature'`)
+4. Push to branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
-## License
+## 📄 License
 
 This project is licensed under the MIT License - see LICENSE file for details.
 
-## Support
+## 👨‍💻 Author
 
-For issues or questions:
-1. Check GitHub Issues
-2. Review Troubleshooting section
-3. Contact: chavdakanubhai2377@gmail.com
+**Pratik Chavda**
+- GitHub: [@chavdakanubhai2377](https://github.com/chavdakanubhai2377)
+- Email: chavdakanubhai2377@gmail.com
 
-## Resources
+## 🙏 Acknowledgments
 
-- [Discord.py Documentation](https://discordpy.readthedocs.io/)
-- [Discord Developer Portal](https://discord.com/developers/)
-- [Discord.py GitHub](https://github.com/Rapptz/discord.py)
-- [Python Documentation](https://docs.python.org/3/)
+- [discord.py](https://github.com/Rapptz/discord.py) - Discord API wrapper
+- [Sapphire Bot](https://sapphirebot.com/) - Inspiration for welcome system
+- [Roti Bot](https://rotiabot.com/) - Inspiration for ticket system
 
-## Roadmap
+## 📞 Support
 
-- [ ] Music player integration
-- [ ] Custom commands system
-- [ ] Reaction roles
-- [ ] Ticket system
-- [ ] Auto-moderation
-- [ ] Statistics dashboard
-- [ ] Web dashboard
-- [ ] Multi-language support
+For issues and feature requests, please [create an issue](https://github.com/chavdakanubhai2377/discord-server-manager-bot/issues)
+
+## 🔄 Updates
+
+This bot is actively maintained. Updates include:
+- Bug fixes
+- New features
+- Performance improvements
+- Security patches
 
 ---
 
-**Made with ❤️ by chavdakanubhai2377**
+**Made with ❤️ by TableMC Development**
 
-Last Updated: 2026-08-27
+Last Updated: 2026-09-09
